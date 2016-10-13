@@ -49,9 +49,8 @@ public class DASDataPublisher implements DataPublisher {
     private AppServerStatsPublishing statsPublisherConfiguration;
     private org.wso2.carbon.databridge.agent.DataPublisher dataPublisher;
 
-    public DASDataPublisher() throws StatPublisherException{
+    public DASDataPublisher() throws StatPublisherException {
         AgentHolder.setConfigPath(getDataAgentConfigPath());
-
 
         statsPublisherConfiguration = ServerConfigurationLoader.getServerConfiguration().
                 getStatsPublisherConfiguration();
@@ -90,8 +89,8 @@ public class DASDataPublisher implements DataPublisher {
         }
     }
 
-    @Override
-    public void publish(Request request, Response response, Map additionalData) throws IOException{
+    @Override public void publish(Request request, Response response, Map additionalData)
+            throws IOException {
         Long startTime = (Long) additionalData.get("startTime");
         Long responseTime = (Long) additionalData.get("responseTime");
 
@@ -99,8 +98,8 @@ public class DASDataPublisher implements DataPublisher {
             Event event;
             try {
                 event = EventBuilder
-                        .buildEvent(statsPublisherConfiguration.getStreamId(), request, response, startTime,
-                                    responseTime);
+                        .buildEvent(statsPublisherConfiguration.getStreamId(), request, response,
+                                    startTime, responseTime);
             } catch (StatPublisherException e) {
                 LOG.error("Creating the Event failed: " + e);
                 throw new IOException("Creating the Event failed: " + e);
@@ -127,7 +126,8 @@ public class DASDataPublisher implements DataPublisher {
      * @return the path to the file containing configurations for the Data Agent
      */
     private String getDataAgentConfigPath() {
-        Path path = Paths.get(PathUtils.getAppServerConfigurationBase().toString(), Constants.DATA_AGENT_CONF);
+        Path path = Paths.get(PathUtils.getAppServerConfigurationBase().toString(),
+                              Constants.DATA_AGENT_CONF);
         return path.toString();
     }
 }

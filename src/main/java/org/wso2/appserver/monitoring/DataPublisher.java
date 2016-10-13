@@ -29,9 +29,8 @@ import java.util.Map;
 public interface DataPublisher {
 
     /**
-     *
-     * @param request request reached to tomcat.
-     * @param response response generated for client.
+     * @param request        request reached to tomcat.
+     * @param response       response generated for client.
      * @param additionalData data to be published which cannot retrieved from request or response object.
      * @throws IOException can be thrown IO exception while publishing data.
      */

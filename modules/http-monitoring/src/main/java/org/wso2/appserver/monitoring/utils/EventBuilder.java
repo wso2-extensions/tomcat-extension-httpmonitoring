@@ -37,7 +37,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Utility class to create an Event to be published by the DataPublisher.
  *
- * @since 6.0.0
+ * @since 1.0.0
  */
 public class EventBuilder {
 

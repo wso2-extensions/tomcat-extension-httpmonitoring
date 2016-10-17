@@ -25,7 +25,7 @@
     -->
     <statistics-publisher>
         <!-- Enable/disable HTTP statistics monitoring. -->
-        <enable-stats-publisher>false</enable-stats-publisher>
-        <publisher-implementation>false</publisher-implementation>
+        <enable-stats-publisher>true</enable-stats-publisher>
+        <publisher-implementation>org.wso2.appserver.monitoring.DASDataPublisher</publisher-implementation>
     </statistics-publisher>
 </wso2as-web>

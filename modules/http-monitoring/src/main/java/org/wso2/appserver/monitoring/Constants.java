@@ -20,7 +20,7 @@ package org.wso2.appserver.monitoring;
 /**
  * The constants used in http stats publishing module.
  *
- * @since 6.0.0
+ * @since 1.0.0
  */
 public class Constants {
     /**

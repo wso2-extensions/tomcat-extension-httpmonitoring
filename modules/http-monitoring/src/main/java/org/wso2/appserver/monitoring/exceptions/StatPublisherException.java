@@ -20,7 +20,7 @@ package org.wso2.appserver.monitoring.exceptions;
 /**
  * Custom exception class for the Statistics Publisher module.
  *
- * @since 6.0.0
+ * @since 1.0.0
  */
 public class StatPublisherException extends Exception {
     /**

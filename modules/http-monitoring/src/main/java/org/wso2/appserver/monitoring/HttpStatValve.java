@@ -27,10 +27,10 @@ import org.wso2.appserver.configuration.context.WebAppStatsPublishing;
 import org.wso2.appserver.configuration.listeners.ContextConfigurationLoader;
 import org.wso2.appserver.monitoring.exceptions.StatPublisherException;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.ServletException;
 
 /**
  * An implementation of {@code ValveBase} that publishes HTTP statistics of the requests to WSO2 Data Analytics Server.
@@ -51,12 +51,16 @@ public class HttpStatValve extends ValveBase {
 
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
-        statsPublisherConfiguration =
-                ContextConfigurationLoader.getContextConfiguration(request.getContext()).get()
-                                          .getStatsPublisherConfiguration();
+        if (statsPublisherConfiguration == null) {
+            statsPublisherConfiguration =
+                    ContextConfigurationLoader.getContextConfiguration(request.getContext()).get()
+                                              .getStatsPublisherConfiguration();
+        }
 
         try {
-            dataPublisher = getDataPublisher(statsPublisherConfiguration);
+            if (dataPublisher == null) {
+                dataPublisher = getDataPublisher(statsPublisherConfiguration);
+            }
         } catch (StatPublisherException e) {
             LOG.error("Initializing DataPublisher failed: ", e);
             throw new ServletException("Initializing DataPublisher failed: " + e);

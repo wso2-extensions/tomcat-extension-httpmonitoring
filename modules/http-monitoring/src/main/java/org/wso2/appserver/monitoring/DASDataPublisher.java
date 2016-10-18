@@ -89,7 +89,8 @@ public class DASDataPublisher implements DataPublisher {
         }
     }
 
-    @Override public void publish(Request request, Response response, Map additionalData)
+    @Override
+    public void publish(Request request, Response response, Map additionalData)
             throws IOException {
         Long startTime = (Long) additionalData.get("startTime");
         Long responseTime = (Long) additionalData.get("responseTime");

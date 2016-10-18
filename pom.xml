@@ -212,7 +212,7 @@
         <commons.lang3.version>3.4</commons.lang3.version>
         <carbon.analyticscommon.version>5.0.8</carbon.analyticscommon.version>
         <libthrift.version>0.9.3</libthrift.version>
-        <appserver.utility.version>1.0.0</appserver.utility.version>
+        <appserver.utility.version>1.0.1</appserver.utility.version>
         <log4j.version>1.2.17</log4j.version>
 
         <wso2.appserver.maven.compiler.source>1.8</wso2.appserver.maven.compiler.source>

@@ -16,13 +16,13 @@
     <parent>
         <groupId>org.wso2.carbon.tomcat.monitoring.extension</groupId>
         <artifactId>http-statistics-monitoring-module</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.tomcat.monitoring.extension</groupId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <artifactId>http-statistics-monitoring</artifactId>
     <name>Tomcat - Extension - Http Statistics Monitoring</name>
     <url>http://wso2.com</url>

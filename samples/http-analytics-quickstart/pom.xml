@@ -22,13 +22,13 @@
     <parent>
         <groupId>org.wso2.carbon.tomcat.monitoring.extension</groupId>
         <artifactId>samples</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>http-analytics-quickstart</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>WSO2 Application Server - HTTP Analytics Quickstart</name>
 

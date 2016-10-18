@@ -16,12 +16,12 @@
     <parent>
         <groupId>org.wso2.carbon.tomcat.monitoring.extension</groupId>
         <artifactId>statistics-monitoring</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.wso2.carbon.tomcat.monitoring.extension</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <artifactId>http-statistics-monitoring-module</artifactId>
     <name>Tomcat - Extension - Http Statistics Monitoring - Module</name>

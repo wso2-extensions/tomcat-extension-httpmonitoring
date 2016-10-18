@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
  * This sample test class contains unit tests performed for the methods used within the http-statistics-monitoring
  * module.
  *
- * @since 6.0.0
+ * @since 1.0.0
  */
 public class StatPublisherUnitTest {
     private Request request;

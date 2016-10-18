@@ -115,53 +115,6 @@
 
     </pluginRepositories>
 
-    <!--<build>-->
-        <!--<finalName>${project.artifactId}-${version}-tiny</finalName>-->
-        <!--<plugins>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-compiler-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<encoding>UTF-8</encoding>-->
-                    <!--<source>${wso2.appserver.maven.compiler.source}</source>-->
-                    <!--<target>${wso2.appserver.maven.compiler.target}</target>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-assembly-plugin</artifactId>-->
-                <!--<version>2.6</version>-->
-                <!--<configuration>-->
-                    <!--<descriptorRefs>-->
-                        <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
-                    <!--</descriptorRefs>-->
-                    <!--<finalName>${artifactId}-${version}-fat</finalName>-->
-                    <!--<appendAssemblyId>false</appendAssemblyId>-->
-                <!--</configuration>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<id>make-assembly</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>single</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-release-plugin</artifactId>-->
-                <!--<configuration>-->
-                    <!--<preparationGoals>clean install</preparationGoals>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-deploy-plugin</artifactId>-->
-            <!--</plugin>-->
-        <!--</plugins>-->
-    <!--</build>-->
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -259,7 +212,7 @@
         <commons.lang3.version>3.4</commons.lang3.version>
         <carbon.analyticscommon.version>5.0.8</carbon.analyticscommon.version>
         <libthrift.version>0.9.3</libthrift.version>
-        <appserver.utility.version>1.0.0</appserver.utility.version>
+        <appserver.utility.version>1.0.1</appserver.utility.version>
         <log4j.version>1.2.17</log4j.version>
 
         <wso2.appserver.maven.compiler.source>1.8</wso2.appserver.maven.compiler.source>

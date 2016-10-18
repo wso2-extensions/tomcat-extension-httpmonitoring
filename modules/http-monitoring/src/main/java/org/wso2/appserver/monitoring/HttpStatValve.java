@@ -23,132 +23,79 @@ import org.apache.catalina.connector.Response;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
-import org.wso2.appserver.configuration.listeners.ServerConfigurationLoader;
-import org.wso2.appserver.configuration.server.AppServerStatsPublishing;
+import org.wso2.appserver.configuration.context.WebAppStatsPublishing;
+import org.wso2.appserver.configuration.listeners.ContextConfigurationLoader;
 import org.wso2.appserver.monitoring.exceptions.StatPublisherException;
-import org.wso2.appserver.monitoring.utils.EventBuilder;
-import org.wso2.appserver.utils.PathUtils;
-import org.wso2.carbon.databridge.agent.AgentHolder;
-import org.wso2.carbon.databridge.agent.DataPublisher;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointAgentConfigurationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointAuthenticationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointConfigurationException;
-import org.wso2.carbon.databridge.agent.exception.DataEndpointException;
-import org.wso2.carbon.databridge.commons.Event;
-import org.wso2.carbon.databridge.commons.exception.TransportException;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 
 /**
  * An implementation of {@code ValveBase} that publishes HTTP statistics of the requests to WSO2 Data Analytics Server.
  *
- * @since 6.0.0
+ * @since 1.0.0
  */
 public class HttpStatValve extends ValveBase {
     private static final Log LOG = LogFactory.getLog(HttpStatValve.class);
     private DataPublisher dataPublisher;
-    private AppServerStatsPublishing statsPublisherConfiguration;
+    private WebAppStatsPublishing statsPublisherConfiguration;
 
     @Override
     protected void initInternal() throws LifecycleException {
         super.initInternal();
         LOG.debug("The HttpStatValve initialized.");
         setTrustStorePath();
-
-        statsPublisherConfiguration = ServerConfigurationLoader.getServerConfiguration().
-                getStatsPublisherConfiguration();
-
-        try {
-            dataPublisher = getDataPublisher();
-        } catch (StatPublisherException e) {
-            LOG.error("Initializing DataPublisher failed:", e);
-            throw new LifecycleException("Initializing DataPublisher failed: " + e);
-        }
     }
 
     @Override
     public void invoke(Request request, Response response) throws IOException, ServletException {
+        if (statsPublisherConfiguration == null) {
+            statsPublisherConfiguration =
+                    ContextConfigurationLoader.getContextConfiguration(request.getContext()).get()
+                                              .getStatsPublisherConfiguration();
+        }
+
+        try {
+            if (dataPublisher == null) {
+                dataPublisher = getDataPublisher(statsPublisherConfiguration);
+            }
+        } catch (StatPublisherException e) {
+            LOG.error("Initializing DataPublisher failed: ", e);
+            throw new ServletException("Initializing DataPublisher failed: " + e);
+        } catch (ClassNotFoundException e) {
+            LOG.error("Data publisher implementation class not found: ", e);
+            throw new ServletException("Data publisher implementation class not found: " + e);
+        } catch (InstantiationException e) {
+            LOG.error("Error occurred while instantiating Data publisher: ", e);
+            throw new ServletException("Error occurred while instantiating Data publisher: " + e);
+        } catch (IllegalAccessException e) {
+            LOG.error("Data publisher implementation class cannot access: ", e);
+            throw new ServletException("Data publisher implementation class cannot access: " + e);
+        }
         Long startTime = System.currentTimeMillis();
         getNext().invoke(request, response);
         long responseTime = System.currentTimeMillis() - startTime;
 
-        if (filterResponse(response)) {
-            Event event;
-            try {
-                event = EventBuilder.buildEvent(statsPublisherConfiguration.getStreamId(), request, response, startTime,
-                        responseTime);
-            } catch (StatPublisherException e) {
-                LOG.error("Creating the Event failed: " + e);
-                throw new IOException("Creating the Event failed: " + e);
-            }
-            dataPublisher.publish(event);
-        }
+        Map additionalData = new HashMap<>();
+        additionalData.put("startTime", startTime);
+        additionalData.put("responseTime", responseTime);
+
+        dataPublisher.publish(request, response, additionalData);
     }
 
     /**
-     * Gets file path to the file containing Data Agent configuration and properties.
-     *
-     * @return the path to the file containing configurations for the Data Agent
-     */
-    private String getDataAgentConfigPath() {
-        Path path = Paths.get(PathUtils.getAppServerConfigurationBase().toString(), Constants.DATA_AGENT_CONF);
-        return path.toString();
-    }
-
-    /**
-     * Instantiates a data publisher to be used to publish data to DAS.
+     * Instantiates a data publisher to be used to publish data.
      *
      * @return DataPublisher object initialized with configurations
      * @throws StatPublisherException
      */
-    private DataPublisher getDataPublisher() throws StatPublisherException {
-        AgentHolder.setConfigPath(getDataAgentConfigPath());
-        DataPublisher dataPublisher;
-
-        try {
-            if (!Optional.ofNullable(statsPublisherConfiguration.getAuthenticationURL()).isPresent()) {
-                dataPublisher = new DataPublisher(statsPublisherConfiguration.getPublisherURL(),
-                        statsPublisherConfiguration.getUsername(), statsPublisherConfiguration.getPassword());
-            } else {
-                dataPublisher = new DataPublisher(statsPublisherConfiguration.getDataAgentType(),
-                        statsPublisherConfiguration.getPublisherURL(),
-                        statsPublisherConfiguration.getAuthenticationURL(), statsPublisherConfiguration.getUsername(),
-                        statsPublisherConfiguration.getPassword());
-            }
-        } catch (DataEndpointAgentConfigurationException e) {
-            LOG.error("Data Endpoint Agent configuration failed: " + e);
-            throw new StatPublisherException("Data Endpoint Agent configuration failed: ", e);
-        } catch (DataEndpointException e) {
-            LOG.error("Communication with Data Endpoint failed: " + e);
-            throw new StatPublisherException("Communication with Data Endpoint failed: ", e);
-        } catch (DataEndpointConfigurationException e) {
-            LOG.error("Parsing Data Endpoint configurations failed: " + e);
-            throw new StatPublisherException("Parsing Data Endpoint configurations failed: ", e);
-        } catch (DataEndpointAuthenticationException e) {
-            LOG.error("Connection to Data Endpoint failed during authentication: " + e);
-            throw new StatPublisherException("Connection to Data Endpoint failed during authentication: ", e);
-        } catch (TransportException e) {
-            LOG.error("Connection failed: " + e);
-            throw new StatPublisherException("Connection failed: ", e);
-        }
-
-        return dataPublisher;
-    }
-
-    /**
-     * Filters to process only requests of text/html type.
-     *
-     * @param response the Response object of client
-     * @return true if request is of text/html type and false if not
-     */
-    private boolean filterResponse(Response response) {
-        String responseContentType = response.getContentType();
-        //  if the response content is not null and is of type text/html, allow to publish stats
-        return ((responseContentType != null) && (responseContentType.contains("text/html")));
+    private DataPublisher getDataPublisher(WebAppStatsPublishing statsPublisherConfiguration)
+            throws StatPublisherException, ClassNotFoundException, IllegalAccessException,
+                   InstantiationException {
+        Class statsPublisherImpl = Class.forName(statsPublisherConfiguration.getPublisherImplementation());
+        return (DataPublisher) statsPublisherImpl.newInstance();
     }
 
     /**
